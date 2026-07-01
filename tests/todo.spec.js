@@ -1,12 +1,15 @@
 import { test, expect } from '@playwright/test'
 import { TodoPage } from "./pages/todo.page.js";
 
-// Each test gets a fresh browser context, so localStorage ("todos") starts empty.
+// Each test gets a fresh browser context, so localStorage starts empty. The app
+// is now gated behind login, so we seed a session before navigating; that user's
+// todos ("todos:testuser") start empty too.
 
 test.describe('Todo front page', () => {
   let Todo;
   test.beforeEach(async ({ page }) => {
     Todo = new TodoPage(page);
+    await Todo.seedSession('testuser');
     await Todo.goto();
   });
 
@@ -42,7 +45,7 @@ test.describe('Todo front page', () => {
     await Todo.getAddTodoButton().click();
 
     await expect(Todo.getDefaultEmptyState()).toBeVisible();
-  })
+  });
 
   test('newest todo appears first', async ({ page }) => {
     await Todo.addTodo('First');
@@ -82,7 +85,7 @@ test.describe('Todo front page', () => {
     await Todo.getNthTodoItem(1).deleteButton.click();
     await expect(Todo.getAllTodoItems()).toHaveCount(0);
 
-    await expect(Todo.getDefaultEmptyState()).toBeVisible()
+    await expect(Todo.getDefaultEmptyState()).toBeVisible();
   });
 
   test('persists todos across a page reload', async ({ page }) => {
