@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "checkJs": false,
+    "jsx": "react"
+  },
+  "include": ["src", "tests", "*.config.js"]
+}
