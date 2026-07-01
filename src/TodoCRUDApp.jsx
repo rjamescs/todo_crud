@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "./AuthContext.jsx";
 
 export default function TodoCRUDApp() {
+    const { currentUser, logout } = useAuth();
+    // Each user's todos live under their own key, so accounts don't share data.
+    const storageKey = `todos:${currentUser}`;
+
     const [todos, setTodos] = useState(() => {
-        const saved = localStorage.getItem("todos");
+        const saved = localStorage.getItem(storageKey);
         return saved ? JSON.parse(saved) : [];
     });
     const [title, setTitle] = useState("");
@@ -10,8 +15,8 @@ export default function TodoCRUDApp() {
     const [editingText, setEditingText] = useState("");
 
     useEffect(() => {
-        localStorage.setItem("todos", JSON.stringify(todos));
-    }, [todos]);
+        localStorage.setItem(storageKey, JSON.stringify(todos));
+    }, [todos, storageKey]);
 
     const addTodo = () => {
         if (!title.trim()) return;
@@ -64,6 +69,19 @@ export default function TodoCRUDApp() {
     return (
         <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
             <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-8">
+                <div className="flex justify-between items-center mb-6">
+                    <span className="text-sm text-gray-500" data-testid="currentUser">
+                        Logged in as <span className="font-medium text-black">{currentUser}</span>
+                    </span>
+                    <button
+                        onClick={logout}
+                        className="px-4 py-2 rounded-xl border text-sm hover:bg-gray-100"
+                        data-testid="logoutButton"
+                    >
+                        Log out
+                    </button>
+                </div>
+
                 <div className="mb-8 text-center">
                     <h1 className="text-4xl font-bold mb-2" data-testid="header">Todo CRUD App</h1>
                     <p className="text-gray-500" data-testid="subHeader">

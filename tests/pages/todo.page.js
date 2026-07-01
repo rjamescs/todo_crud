@@ -8,6 +8,18 @@ export class TodoPage {
     this.page = page
   }
 
+  /**
+   * Log in without going through the UI by pre-seeding the session in
+   * localStorage. Session restore only reads `currentUser`, so no password is
+   * needed. Must be called before goto()/reload — addInitScript re-runs on
+   * every navigation, so the seeded session survives page.reload().
+   */
+  async seedSession(username = 'testuser') {
+    await this.page.addInitScript((name) => {
+      localStorage.setItem('currentUser', name);
+    }, username);
+  }
+
   async goto() {
       await this.page.goto('/');
       await expect(this.getHeader()).toBeVisible();
@@ -21,6 +33,20 @@ export class TodoPage {
   /** @returns {Locator} */
   getSubHeader() {
       return this.page.getByTestId('subHeader');
+  }
+
+  /** @returns {Locator} */
+  getCurrentUser() {
+      return this.page.getByTestId('currentUser');
+  }
+
+  /** @returns {Locator} */
+  getLogoutButton() {
+      return this.page.getByTestId('logoutButton');
+  }
+
+  async logout() {
+      await this.getLogoutButton().click();
   }
 
   /** @returns {Locator} */

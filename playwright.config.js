@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
+  workers: 3,
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -10,6 +11,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
@@ -30,6 +32,6 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
-    timeout: 130 * 1000,
-  },
+    timeout: 135 * 1000,
+  }
 })
