@@ -13,6 +13,11 @@ export class TodoPage {
    * localStorage. Session restore only reads `currentUser`, so no password is
    * needed. Must be called before goto()/reload — addInitScript re-runs on
    * every navigation, so the seeded session survives page.reload().
+   *
+   * COUPLING NOTE: this intentionally does NOT create a matching entry in the
+   * `users` store. It works only because AuthContext trusts `currentUser` on
+   * boot without validating it. If session restore is ever hardened to check
+   * the user store, seed a `users` entry here too.
    */
   async seedSession(username = 'testuser') {
     await this.page.addInitScript((name) => {
@@ -74,7 +79,7 @@ export class TodoPage {
       return this.page.getByTestId('todoItem');
   }
 
-  /** @returns {{checkbox: Locator, heading: Locator, created: Locator, editButton: Locator, deleteButton: Locator}} */
+  /** @returns {{checkbox: Locator, heading: Locator, created: Locator, editButton: Locator, editInput: Locator, saveEditButton: Locator, deleteButton: Locator}} */
   getNthTodoItem(nthItem) {
     let nthTodoItem = this.page.getByTestId('todoItem').nth(nthItem - 1);
     return {

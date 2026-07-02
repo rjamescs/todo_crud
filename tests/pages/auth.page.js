@@ -50,10 +50,18 @@ export class AuthPage {
    * we're not already there.
    */
   async ensureMode(mode) {
-    const submitText = (await this.getSubmitButton().textContent())?.trim();
-    const isRegister = submitText === 'Register';
-    if (mode === 'register' && !isRegister) await this.getToggle().click();
-    if (mode === 'login' && isRegister) await this.getToggle().click();
+    const expected = mode === 'register' ? 'Register' : 'Log in';
+    const submit = this.getSubmitButton();
+    // Wait for a stable mode label first — the button briefly reads
+    // "Please wait…" while a submit is in flight, which would otherwise cause
+    // a one-shot textContent() read to mis-detect the current mode.
+    await expect(submit).toHaveText(/^(Log in|Register)$/);
+    if ((await submit.textContent())?.trim() !== expected) {
+      await this.getToggle().click();
+    }
+    // Confirm the switch took effect (auto-waits) so callers never race the
+    // re-render before filling the form.
+    await expect(submit).toHaveText(expected);
   }
 
   async register(username, password) {

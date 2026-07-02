@@ -18,6 +18,9 @@ export default function AuthScreen() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Guard against a second submit (e.g. rapid Enter) while one is in flight —
+    // disabling the button doesn't block keyboard form submission.
+    if (busy) return;
     setError("");
     setBusy(true);
     try {
