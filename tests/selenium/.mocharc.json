@@ -1,0 +1,6 @@
+{
+  "spec": "tests/selenium/**/*.test.js",
+  "require": "tests/selenium/mocha.setup.js",
+  "timeout": 60000,
+  "parallel": false
+}
