@@ -4,6 +4,9 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   workers: 3,
   testDir: './tests',
+  testIgnore: [
+    '**/selenium/**',       // Exclude an entire directory
+  ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
