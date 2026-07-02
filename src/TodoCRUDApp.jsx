@@ -22,23 +22,26 @@ export default function TodoCRUDApp() {
         if (!title.trim()) return;
 
         const newTodo = {
-            id: Date.now(),
+            // randomUUID avoids id collisions when todos are added within the
+            // same millisecond (Date.now() could produce duplicate keys).
+            id: crypto.randomUUID(),
             title,
             completed: false,
-            createdAt: new Date().toLocaleString(),
+            // Store a sortable, locale-independent timestamp; format at render.
+            createdAt: new Date().toISOString(),
         };
 
-        setTodos([newTodo, ...todos]);
+        setTodos((prev) => [newTodo, ...prev]);
         setTitle("");
     };
 
     const deleteTodo = (id) => {
-        setTodos(todos.filter((todo) => todo.id !== id));
+        setTodos((prev) => prev.filter((todo) => todo.id !== id));
     };
 
     const toggleComplete = (id) => {
-        setTodos(
-            todos.map((todo) =>
+        setTodos((prev) =>
+            prev.map((todo) =>
                 todo.id === id
                     ? { ...todo, completed: !todo.completed }
                     : todo
@@ -54,8 +57,8 @@ export default function TodoCRUDApp() {
     const saveEdit = (id) => {
         if (!editingText.trim()) return;
 
-        setTodos(
-            todos.map((todo) =>
+        setTodos((prev) =>
+            prev.map((todo) =>
                 todo.id === id
                     ? { ...todo, title: editingText }
                     : todo
@@ -163,7 +166,7 @@ export default function TodoCRUDApp() {
                                             </h2>
 
                                             <p className="text-sm text-gray-400 mt-1" data-testid='createdAt'>
-                                                Created: {todo.createdAt}
+                                                Created: {new Date(todo.createdAt).toLocaleString()}
                                             </p>
                                         </>
                                     )}
